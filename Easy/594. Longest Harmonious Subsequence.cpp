@@ -1,31 +1,36 @@
-/* This problem implements stack
+/* 
+This problem implements the hash map and hash set method. We use hashmap to store all the number of elements inside the array. After then we go over the hash set to find the potential match.
 
-Time : O(N)
-Space : O(N)
+Time: O(N)
+Space: O(N)
+
 */
-
 class Solution {
 public:
-    bool isValid(string s) {
+    int findLHS(vector<int>& nums) {
         
-         string openingBrackets = "([{";
-         string closingBrackets = ")]}";
-         unordered_map<char,char> matchingBrackets{{')', '('}, {']', '['}, {'}', '{'}};
-         stack<char> stack;
-         
-         for (char element : s) {
-             if (openingBrackets.find(element) != string::npos) {
-                 stack.push(element);
-             } else if (closingBrackets.find(element) != string::npos) {
-                 if (stack.size() == 0) {
-                     return false;
-                 } else if (stack.top() == matchingBrackets[element]) {
-                     stack.pop();
-                 } else {
-                     return false;
-                 }
-             }
-         }
-        return stack.size() == 0;
+        unordered_map<int, int>hashmap;
+        unordered_set<int> hashset;
+        int res = 0;
+        
+        for (int num : nums) {
+            hashmap[num]++;
+            if (hashset.find(num) != hashset.end()) {
+                continue;
+            }
+            hashset.insert(num);
+        } 
+        
+        for(auto num : hashset) {
+            
+            int potentialMatch1 = num + 1, potentialMatch2 = num - 1;
+            if (hashset.find(potentialMatch1) != hashset.end()) {
+                res = max(res, hashmap[potentialMatch1] + hashmap[num]);
+            }
+            if (hashset.find(potentialMatch2) != hashset.end()) {
+                res = max(res, hashmap[potentialMatch2] + hashmap[num]);
+            }
+        }
+       return res; 
     }
 };
