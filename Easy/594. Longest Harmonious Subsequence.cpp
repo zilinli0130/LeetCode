@@ -1,5 +1,6 @@
 /* 
-This problem implements the hash map and hash set method. We use hashmap to store all the number of elements inside the array. After then we go over the hash set to find the potential match.
+This problem implements the hash map and hash set method. We use hashmap to store all the number of elements inside the array. 
+After then we go over the hash set to find the potential match.
 
 Time: O(N)
 Space: O(N)
