@@ -1,31 +1,40 @@
-/* This problem implements stack
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 
-Time : O(N)
-Space : O(N)
+/*This problem implements two pointer method. If a cycle exists, then these two pointers will eventually meet.
+
+Time: O(N)
+Space: O(1)
+
 */
-
 class Solution {
-public:
-    bool isValid(string s) {
+    
+    public:
+
+    bool hasCycle(ListNode *head) {
         
-         string openingBrackets = "([{";
-         string closingBrackets = ")]}";
-         unordered_map<char,char> matchingBrackets{{')', '('}, {']', '['}, {'}', '{'}};
-         stack<char> stack;
-         
-         for (char element : s) {
-             if (openingBrackets.find(element) != string::npos) {
-                 stack.push(element);
-             } else if (closingBrackets.find(element) != string::npos) {
-                 if (stack.size() == 0) {
-                     return false;
-                 } else if (stack.top() == matchingBrackets[element]) {
-                     stack.pop();
-                 } else {
-                     return false;
-                 }
-             }
-         }
-        return stack.size() == 0;
+        if(!head || !head->next) {
+            return false;
+        }
+        
+        ListNode *slow = head;
+        ListNode *fast = head->next;
+        
+        while (fast != nullptr && fast->next != nullptr) {
+            
+            fast = fast->next->next;
+            slow = slow->next;
+            if (fast == slow) {
+                return true;
+            }
+        }
+      return false;  
     }
 };
+
