@@ -1,36 +1,51 @@
 /**
- * Definition for singly-linked list.
- * struct ListNode {
+ * Definition for a binary tree node.
+ * struct TreeNode {
  *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+
+/* This problem implements the Depth First Search method to find the smallest subtree containing all the deepest nodes.
+If the depth of left and right sub tree are the same, the function returns the root and current depth. Otherwiese,
+we return the subtree with the larger depth and its subtree.
+
+Time: O(N)
+Space: O(N)
+
+*/
+
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
+    
+    struct TreeInfo {
+        TreeNode* tree;
+        int depth;
+    };
+    
+    TreeNode* subtreeWithAllDeepest(TreeNode* root) {
+        return dfs(root, 0).tree;
+    }
+    
+    TreeInfo dfs(TreeNode* root, int depth) {
         
-        while (p1 != NULL || p2 != NULL) {
+        if (!root) {return TreeInfo{nullptr, depth};}
+        
+        TreeInfo leftTreeData = dfs(root->left, depth + 1);
+        TreeInfo rightTreeData = dfs(root->right, depth + 1);
+        
+        if (leftTreeData.depth > rightTreeData.depth) {
             
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
+                return TreeInfo{leftTreeData.tree, leftTreeData.depth}; 
             
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+        } else if (leftTreeData.depth < rightTreeData.depth) {
+            
+                return TreeInfo{rightTreeData.tree, rightTreeData.depth}; 
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+      return TreeInfo{root, leftTreeData.depth};  
     }
 };
