@@ -1,36 +1,45 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
+/*
+This problem implements the Two Pointer method to traverse the whole array and find out all the Arithmetic subset.
+Then we could calculate the result for each subset to add up to the final result
+
+Time : O(N)
+Space : O(1)
+*/
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
+    
+    int numberOfArithmeticSlices(vector<int>& A) {
         
-        while (p1 != NULL || p2 != NULL) {
+        if (A.empty()) {return 0;}
+     
+        int left = 0, right = 1, result = 0;
+        while (right < A.size() - 1) {
             
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
-            
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+            if (A[right] - A[right - 1] == A[right + 1] - A[right]) {
+                right++;
+                continue;
+            } else if (A[right] - A[right - 1] != A[right + 1] - A[right] && right - left > 1) {
+                result += helper(left, right);
+                
+            }
+            left = right;
+            right = left + 1;
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+        
+        if (right - left > 1) {
+            result += helper(left, right);
+        }
+       return result;
+    }
+    
+    int helper(int left, int right) {
+        
+        int sum = 0, count = right - left - 1;
+        
+        while (!count == 0) {
+            sum += count;
+            count--;
+        }
+        return sum;
     }
 };
