@@ -1,36 +1,37 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
+/*
+This problem implements the Depth First Search method to find all the permutations. We use a boolean array to keep track of
+whether the current element is visited or not.
+
+Time : O(N*N!), N! of leaves and N of depth for the recursion call tree
+SPace : O(N*N!), store the resultant permutation array
+where N is the length of nums
+*/
 class Solution {
+private:
+    vector<int> permutation;
+    vector<vector<int>> results; 
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
+    vector<vector<int>> permute(vector<int>& nums) {
         
-        while (p1 != NULL || p2 != NULL) {
+        vector<bool> visited(nums.size(), false);
+        dfs(nums, visited, 0);
+        return results;
+    }
+    
+    void dfs(vector<int> &nums, vector<bool> &visited, int idx) {
+        
+        if (idx == nums.size()) {results.push_back(permutation); return;}
+        
+        for (int i = 0; i < nums.size(); i++) {
             
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
-            
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+            if (!visited[i]) {
+                visited[i] = true;
+                permutation.push_back(nums[i]);
+                dfs(nums, visited, idx + 1);
+                permutation.pop_back();
+                visited[i] = false;
+            }
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+        return;
     }
 };
