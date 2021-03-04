@@ -1,36 +1,52 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
-        
-        while (p1 != NULL || p2 != NULL) {
-            
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
-            
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+/* The problem implements stack to keep track of the next minimum value (Greedy Algorithm)
+Time : O(N)
+Space: O(N)
+*/
+    
+    vector<int> mostCompetitive(vector<int>& nums, int k) {
+        vector<int> stack, result;
+        int count = nums.size() - k;
+        for(int num : nums) {
+            while (!stack.empty() && num < stack.back() && count > 0) {
+                stack.pop_back();
+                count--;
+            }
+            stack.push_back(num);
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+        
+        if (stack.size() > k) {
+            for (int i = 0; i < k; i++) {
+                result.push_back(stack[i]);
+            }
+            return result;
+        }
+        return stack;
     }
+    
+    /*Greedy Approach
+    //Time: O(N^2)
+    //Space: O(N)
+    vector<int> mostCompetitive(vector<int>& nums, int k) {
+        vector<int> result;
+        while (k > 0) {
+            int startIdx, minValue = INT_MAX, minValueIdx;
+            if (result.empty()) {
+                startIdx = 0;
+            } 
+            
+            for (int i = startIdx; i < nums.size(); i++) {
+                if (nums[i] < minValue && i + k <= nums.size()) {
+                    minValue = nums[i];
+                    minValueIdx = i;
+                }
+            }
+            result.push_back(minValue);
+            startIdx = minValueIdx + 1;
+            k--;
+        }
+        return result;
+    }
+    */
 };
