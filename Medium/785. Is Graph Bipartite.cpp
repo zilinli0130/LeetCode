@@ -1,36 +1,50 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
+/*
+This problem implements the Depth First Search method to divide nodes into two sets. If any given neighbor nodes are 
+in the same set, then this graph is not Bipartite.
+
+Time : O(V+ E)
+Space : O(V)
+Where V is number of vertexes and E is number of edges
+*/
+
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
-        
-        while (p1 != NULL || p2 != NULL) {
-            
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
-            
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+    bool isBipartite(vector<vector<int>>& graph) {
+       
+        unordered_map<int, int> hashmap;
+        for (int i = 0; i < graph.size(); i++) {
+            hashmap[i] = 0;
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+        
+        for (int i = 0; i < graph.size(); i++) {
+            
+            if (!hashmap[i] || graph[i].empty()) {
+                
+                if (!dfs(graph, hashmap, i)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    bool dfs(vector<vector<int>>& graph, unordered_map<int, int>& hashmap, int i) {
+        
+        
+        for (int neighbor : graph[i]) {
+            
+            if (!hashmap[neighbor]) {
+                
+                hashmap[neighbor] = 1 - hashmap[i];
+                
+                if (!dfs(graph, hashmap, neighbor)) {
+                    return false;
+                }
+            }
+            else if(hashmap[neighbor] == hashmap[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 };
