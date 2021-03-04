@@ -1,36 +1,49 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
+/* This problem implements the stack method. First we need to split the string with tokens separated by forward slash "/". 
+After that, we need to iterate through all the tokens and build up a stack containing final results
+
+Time: O(N)
+Space: O(N)
+
+*/
+#include <sstream>
+
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
+    
+    string simplifyPath(string path) {
         
-        while (p1 != NULL || p2 != NULL) {
-            
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
-            
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+        //Split the string separated by forward slash "/"
+        bool startWithSlash = path[0] == '/';
+        istringstream iss(path);
+        string token;
+        vector<string> tokens;
+        while (getline(iss, token, '/')) { tokens.push_back(token);}
+        
+        //Build up the stack to store important tokens
+        vector<string> stack;
+        if (startWithSlash) {
+            stack.push_back("");
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+        for (string token : tokens) {
+            
+            if (!token.length() || token == ".") {continue;}
+            
+            if (token == "..") {
+                if (stack.size() == 0 || stack[stack.size() - 1] == "..") {
+                    stack.push_back(token);
+                } else if (stack[stack.size() - 1] != "") {
+                    stack.pop_back();
+                }
+            } else {stack.push_back(token);}
+        }
+        if (stack.size() == 1 && stack[0] == "") {return "/";}
+        
+        //Output the string
+        ostringstream oss;
+        for (auto i = 0; i < stack.size(); i++) {
+            if (i != 0) { oss<<"/"; }
+            oss<<stack[i];
+        }
+	 return oss.str(); 
     }
 };
