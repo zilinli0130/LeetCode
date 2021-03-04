@@ -1,35 +1,31 @@
-# Definition for singly-linked list.
-# class ListNode(object):
-#     def __init__(self, val=0, next=None):
-#         self.val = val
-#         self.next = next
+#Dynamic Programming
+#Time : O(M*N^2) where M is the number of rows and N is number of columns in grid
+#Space : O(M*N^2)
+class Solution:
+    def cherryPickup(self, grid: List[List[int]]) -> int:
+        m = len(grid)
+        n = len(grid[0])
 
-#This problem implements three pointer method
-#We need to keep track of each pointer and make
-#sure the update order of pointers are correct
-#
-#Time : O(N) where N is the number of nodes in a linked list
-#Space : O(1)
+        @lru_cache(None)
+        def dp(row, col1, col2):
+            
+            #Out of boundary
+            if col1 < 0 or col1 >= n or col2 < 0 or col2 >= n:
+                return -inf
+            
+            #Current cell
+            result = 0
+            result += grid[row][col1]
+            if col1 != col2:
+                result += grid[row][col2]
+                
+            #Transition
+            if row != m-1: #Avoid double count
+                
+                #All 9 combinations
+                result += max(dp(row+1, new_col1, new_col2)
+                              for new_col1 in [col1, col1+1, col1-1]
+                              for new_col2 in [col2, col2+1, col2-1])
+            return result
 
-class Solution(object):
-    def swapPairs(self, head):
-        if not head or not head.next:
-            return head
-        
-        fakeNode = ListNode(0)
-        p1 = fakeNode
-        p2 = head
-        
-        while p2 is not None and p2.next is not None:
-            
-            #Swap
-            p3 = p2.next
-            p1.next = p3
-            p2.next = p3.next
-            p3.next = p2
-            
-            #Update
-            p1 = p2
-            p2 = p2.next
-        return fakeNode.next
-        
+        return dp(0, 0, n-1)
