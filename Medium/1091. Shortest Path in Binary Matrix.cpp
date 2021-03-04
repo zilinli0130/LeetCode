@@ -1,36 +1,72 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
+/*
+Find shortest path with BFS method
+
+Time : O(N^2)
+Space: O(1)
+*/
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
+    int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
         
-        while (p1 != NULL || p2 != NULL) {
+
+        if (grid[0][0] == 1 || grid[grid.size()-1][grid.size()-1] == 1) {return -1;}
+
+        queue<pair<int, int>> q;
+        q.push({0,0}); 
+        
+        grid[0][0] = 1; 
+        while(!q.empty()){
             
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
+            int row = q.front().first;
+            int col = q.front().second;
+
+            if(row == grid.size() - 1 && col == grid.size() - 1) {return grid[row][col];}
             
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+            vector<vector<int>> neighbors = findNeighbors(grid, row, col);
+            for (auto neighbor : neighbors) {
+                
+                if (grid[neighbor[0]][neighbor[1]] == 0) {
+                    
+                    q.push({neighbor[0], neighbor[1]});
+                    grid[neighbor[0]][neighbor[1]] = grid[row][col] + 1;
+                }
+            }
+            q.pop(); 
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+        return -1;
+    }
+    
+    vector<vector<int>> findNeighbors(vector<vector<int>> &grid, int row, int col) {
+        
+        vector<vector<int>> neighbors;
+        
+        int numRows = grid.size();
+        int numCols = grid.size();
+
+        if (row - 1 >= 0) {
+            neighbors.push_back(vector<int>{row - 1, col}); //Up
+        }
+        if (row + 1 < numRows) {
+            neighbors.push_back(vector<int>{row + 1, col}); //Dowm
+        }
+        if (col - 1 >= 0) {
+            neighbors.push_back(vector<int>{row, col - 1}); //Left
+        }
+        if (col + 1 < numCols) {
+            neighbors.push_back(vector<int>{row, col + 1});  //Right
+        }
+        if (row - 1 >= 0 && col - 1 >= 0) {
+            neighbors.push_back(vector<int>{row - 1, col - 1});  //Left Up
+        }
+        if (row + 1 < numRows && col - 1 >= 0) {
+            neighbors.push_back(vector<int>{row + 1, col - 1});  //Left Down
+        }
+        if (row - 1 >= 0 && col + 1 < numCols) {
+            neighbors.push_back(vector<int>{row - 1, col + 1});  //Right Up
+        }
+        if (row + 1 < numRows && col + 1 < numCols) {
+            neighbors.push_back(vector<int>{row + 1, col + 1});  //Right Down
+        }
+        return neighbors;
     }
 };
