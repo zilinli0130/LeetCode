@@ -1,36 +1,41 @@
 /**
- * Definition for singly-linked list.
- * struct ListNode {
+ * Definition for a binary tree node.
+ * struct TreeNode {
  *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+
+/*The problem implements the depth first search. For any given nodes, its value has to be 
+strictly less than a max value and greater than a min value, otherwise it's not a valid
+node for a binary search tree. The min and max values have to be updated along all the 
+future recursion calls. If we traverse to the left, max value has to be updated to the next
+node's parent node; If we traverse to the right, min value has to be updated to the next
+node's parent node as well.
+
+Time:  O(N)
+Space: O(N)
+*/
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
+    bool isValidBST(TreeNode* root) {
+        return isValidBSTHelper(root, INT_MIN - 1, INT_MAX + 1);
+    }
+    
+    bool isValidBSTHelper(TreeNode* root, int minValue, int maxValue) {
         
-        while (p1 != NULL || p2 != NULL) {
-            
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
-            
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+        if (root == NULL) {
+            return true;
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+        if (root->val <= minValue || root->val >= maxValue) {
+            return false;
+        }
+        bool leftBool = isValidBSTHelper(root->left, minValue, root->val);
+        bool rightBool = isValidBSTHelper(root->right, root->val, maxValue);
+        return leftBool && rightBool;
     }
 };
