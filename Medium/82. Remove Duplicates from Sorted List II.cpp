@@ -8,9 +8,6 @@
  *     ListNode(int x, ListNode *next) : val(x), next(next) {}
  * };
  */
-#include <iostream>
-using namespace std
-
 class Solution {
 public:
     ListNode* deleteDuplicates(ListNode* head) {
@@ -19,16 +16,19 @@ public:
         ListNode* prev = dummy;
         
         while (head != NULL) {
-
-            //Skip all the duplicated nodes
+            
+            //Skipped all the duplicate nodes
             if (head->next != NULL && head->val == head->next->val) {
                 while (head->next != NULL && head->val == head->next->val) {
                     head = head->next;
                 }
+                //Connect the node before the first duplicate node to the node after the last duplicate node
                 prev->next = head->next;
             } else {
+                //Move forward
                 prev = prev->next;
             }
+            //Move forward
             head = head->next;
         }
         return dummy->next;
