@@ -1,36 +1,34 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
+/*The problem implements the hash table method in which we loop through
+list A and B to find out all the possible sum outputs. Next we need to 
+loop through list C and D to find the (-1) * sum outputs of C and D. If 
+this value is found inside the hash table, it means that we find a potential
+combination. We then push the total number of combinations to the result
+
+Time : O(N^2) where N is the length of one of the list by assuming all four lists have the same length
+Space : O(N^2)
+
+
+*/
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
+    int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {
         
-        while (p1 != NULL || p2 != NULL) {
-            
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
-            
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+        int output = 0;
+        unordered_map<int, int> hashmap;
+        
+        for (int i = 0; i < A.size(); i++) {
+            for (int j = 0; j < B.size(); j++) {
+                    hashmap[A[i] + B[j]]++; //accumulate the number of same ways
+            }
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+        
+         for (int i = 0; i < C.size(); i++) {
+            for (int j = 0; j < D.size(); j++) {
+                if (hashmap.find(-1 * (C[i] + D[j])) != hashmap.end()) {
+                     output += hashmap[-1 * (C[i] + D[j])]; //add the satisfied number of same ways to the total results 
+                }
+            }
+        }
+        return output;
     }
 };
