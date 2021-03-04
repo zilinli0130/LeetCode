@@ -41,7 +41,7 @@ public:
         
         //Delete pointers to avoid memory leak
         delete ptr1;
-        delet ptr2;
+        delete ptr2;
         return NULL;
     }
 };
