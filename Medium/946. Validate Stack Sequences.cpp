@@ -1,36 +1,30 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
+/*
+This problem implements a stack to keep track of whether the pushed element could be popped from the stack
+Step:
+1. Push all the elements one by one to the stack
+2. Pop element from the stack as long as the last element inside the stack is the same as the current popped element
+3. If the stack is empty at the end, this is a valid stack sequence
+
+Time: O(N)
+Space: O(N) Worse Case : all the elements are pushed to the stack and no possible pop operation can be done
+where N is the total element inside either the pushed or popped array
+*/
 class Solution {
+private:
+    stack<int> stack;
+    int idx = 0;
+    
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
+    bool validateStackSequences(vector<int>& pushed, vector<int>& popped) {
         
-        while (p1 != NULL || p2 != NULL) {
+        for (int num : pushed) {
             
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
-            
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+            stack.push(num);
+            while (!stack.empty() && stack.top() == popped[idx]) {
+                stack.pop();
+                idx++;
+            }
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+        return stack.empty();
     }
 };
