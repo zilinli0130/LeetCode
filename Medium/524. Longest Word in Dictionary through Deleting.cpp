@@ -1,36 +1,53 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
+/*
+This problem implements the Two Pointer method to check whether the potential match strings inside
+the dictionary is a sub string of the input string. We could skip some potential match strings which 
+are smaller than the current result or with same length as the current result but lexicographical longer.
+
+
+Time : O(M*N*K)
+Space : O(1)
+Where M is the length of inpt string, N is the length of dictionary and K is the average length of potential
+match string inside the dictionary
+*/
+
 class Solution {
+    
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
+    string findLongestWord(string s, vector<string>& d) {
         
-        while (p1 != NULL || p2 != NULL) {
+        string result = "";
+        
+        for (int i=0;i < d.size(); i++){
             
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
+            //Length of potential match string inside dictionary is smaller than the current result
+            if (result.length() > d[i].length()) {
+                continue;
+            }
             
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+            //Length of potential match string inside dictionary is lexicographically longer than the current result
+            if (result.length() == d[i].length() && result.compare(d[i]) < 0) {
+                continue;
+            }
+            
+            if (isSubstring(d[i],s)){
+                result = d[i];
+            }
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+        return result;
+
+      }
+    
+    bool isSubstring(string target,string s) {
+        
+        int idx1 = 0,idx2 = 0;
+        while (idx1 < target.size() && idx2 < s.size()) {
+            
+            if (target[idx1] == s[idx2]){
+                idx1++;
+            }
+            idx2++;
+        }
+        return idx1 == target.size(); //see if the index idx1 equals the lenghth of target string
     }
+    
 };
