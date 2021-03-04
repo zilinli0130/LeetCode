@@ -38,6 +38,10 @@ public:
             if (headB != NULL) {headB = headB->next;}
             if (headA == headB) {return headA;}
         }
+        
+        //Delete pointers to avoid memory leak
+        delete ptr1;
+        delet ptr2;
         return NULL;
     }
 };
