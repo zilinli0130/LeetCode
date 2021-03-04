@@ -1,36 +1,31 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
+/*
+This problem implements the recursion method
+Case0: "()" -> return 1
+Case1: "()()...()" ->return score() + score() +...
+Case2:"(((...)))" ->return 2 * score()...
+
+Time : O(N)
+Space : O(N)
+*/
 class Solution {
 public:
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        ListNode *newList = new ListNode(0);
-        ListNode *p1 = l1;
-        ListNode *p2 = l2;
-        ListNode *p3 = newList;
-        int extraDigit = 0;
+    int scoreOfParentheses(string S) {
+        return scoreHelper(S, 0, S.length() - 1);
+    }
+    
+    int scoreHelper(string S, int left, int right) {
         
-        while (p1 != NULL || p2 != NULL) {
+        //Base case "()"
+        if (right - left == 1) {return 1;}
+        
+        int isBalance = 0;
+        for (int i = left; i < right; i++) {
             
-            int p1Val = p1 != NULL ? p1->val : 0;
-            int p2Val = p2 != NULL ? p2->val : 0;
-            int totalDigitSum = p1Val + p2Val + extraDigit;
-            int newListVal = totalDigitSum >= 10 ? totalDigitSum - 10 : totalDigitSum;
-            extraDigit = totalDigitSum >= 10 ? 1 : 0;
-            
-            p3->next = new ListNode(newListVal);
-            p3 = p3->next;
-            if (p1 != NULL) {p1 = p1->next;}
-            if (p2 != NULL) {p2 = p2->next;}
+            if (S[i] == '(') {isBalance++;}
+            if (S[i] == ')') {isBalance--;}
+            if (isBalance == 0) {return scoreHelper(S, left, i) + scoreHelper(S, i + 1, right);}
         }
-        if (extraDigit == 1) {p3->next = new ListNode(1);}
-       return newList->next; 
+        return 2 * scoreHelper(S, left + 1, right - 1);
     }
 };
+
